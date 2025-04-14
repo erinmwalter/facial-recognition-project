@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Emotion Recognition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Facial Emotion Recognition</h1>
+        <p>Upload an image to analyze facial expressions.</p>
+        
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+        
+        <div class="upload-container">
+            <form action="{{ url_for('main.upload') }}" method="post" enctype="multipart/form-data">
+                <div class="file-input">
+                    <input type="file" id="file" name="file" accept="image/*" required>
+                    <label for="file" class="file-label">Choose an image</label>
+                    <span id="file-name">No file chosen</span>
+                </div>
+                <button type="submit" class="button">Analyze Image</button>
+            </form>
+        </div>
+        
+        {% if uploaded_image %}
+<div class="result-container">
+    <h2>Analysis Results</h2>
+
+    <div class="image-container">
+        <img src="{{ result_image if result_image else uploaded_image }}" alt="Analyzed Image">
+    </div>
+
+    <div class="results-summary">
+        <p>{{ results.summary }}</p>
+
+        {% if results.face_count > 0 %}
+        <h3>Detected Emotions:</h3>
+        <ul class="emotions-list">
+            {% for face in results.faces %}
+            <li>
+                <strong>{{ face.emotion }}</strong> ({{ "%.1f"|format(face.confidence) }}% confidence)
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+    </div>
+    
+    <script>
+        // Display selected filename
+        document.getElementById('file').addEventListener('change', function() {
+            const fileName = this.files[0].name;
+            document.getElementById('file-name').textContent = fileName;
+        });
+    </script>
+</body>
+</html>

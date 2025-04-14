@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: black;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: green;
+}
+
+.error-message {
+    color: #e74c3c;
+    background-color: #fdf2f2;
+    border-left: 4px solid #e74c3c;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
