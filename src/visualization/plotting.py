@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import cv2
 from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
-from data_loader import categories
+from src.data.dataset import categories
 
 
 def plot_confusion_matrix(y_true, y_pred):

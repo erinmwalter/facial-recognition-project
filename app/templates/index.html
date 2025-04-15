@@ -1,65 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facial Emotion Recognition</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <div class="container">
         <h1>Facial Emotion Recognition</h1>
-        <p>Upload an image to analyze facial expressions.</p>
-        
-        {% if error %}
-        <div class="error-message">
-            {{ error }}
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('upload-tab')">Image Upload</button>
+            <button class="tab-btn" onclick="openTab('webcam-tab')">Webcam</button>
         </div>
-        {% endif %}
-        
-        <div class="upload-container">
-            <form action="{{ url_for('main.upload') }}" method="post" enctype="multipart/form-data">
-                <div class="file-input">
-                    <input type="file" id="file" name="file" accept="image/*" required>
-                    <label for="file" class="file-label">Choose an image</label>
-                    <span id="file-name">No file chosen</span>
+
+        <div id="upload-tab" class="tab-content active">
+            <p>Upload an image to analyze facial expressions.</p>
+
+            {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <div class="upload-container">
+                <form action="{{ url_for('main.upload') }}" method="post" enctype="multipart/form-data">
+                    <div class="file-input">
+                        <input type="file" id="file" name="file" accept="image/*" required>
+                        <label for="file" class="file-label">Choose an image</label>
+                        <span id="file-name">No file chosen</span>
+                    </div>
+                    <button type="submit" class="button">Analyze Image</button>
+                </form>
+            </div>
+
+            {% if uploaded_image %}
+            <div class="result-container">
+                <h2>Analysis Results</h2>
+
+                <div class="image-container">
+                    <img src="{{ result_image if result_image else uploaded_image }}" alt="Analyzed Image">
                 </div>
-                <button type="submit" class="button">Analyze Image</button>
-            </form>
+
+                <div class="results-summary">
+                    <p>{{ results.summary }}</p>
+
+                    {% if results.face_count > 0 %}
+                    <h3>Detected Emotions:</h3>
+                    <ul class="emotions-list">
+                        {% for face in results.faces %}
+                        <li>
+                            <strong>{{ face.emotion }}</strong> ({{ "%.1f"|format(face.confidence) }}% confidence)
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
         </div>
-        
-        {% if uploaded_image %}
-<div class="result-container">
-    <h2>Analysis Results</h2>
 
-    <div class="image-container">
-        <img src="{{ result_image if result_image else uploaded_image }}" alt="Analyzed Image">
+        <div id="webcam-tab" class="tab-content">
+            <p>Use your webcam for real-time facial emotion analysis.</p>
+
+            <div class="webcam-buttons">
+                <button id="start-camera" class="button">Start Camera</button>
+                <button id="stop-camera" class="button" style="display:none;">Stop Camera</button>
+            </div>
+
+            <div class="webcam-container" style="margin-top: 20px;">
+                <img id="webcam-stream" src=""
+                    style="width: 100%; max-width: 640px; border: 1px solid #ddd; display: none;">
+                <div id="webcam-status" class="results-summary" style="margin-top: 10px; display: none;">
+                    Camera is active. Detecting faces and emotions in real-time.
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="results-summary">
-        <p>{{ results.summary }}</p>
-
-        {% if results.face_count > 0 %}
-        <h3>Detected Emotions:</h3>
-        <ul class="emotions-list">
-            {% for face in results.faces %}
-            <li>
-                <strong>{{ face.emotion }}</strong> ({{ "%.1f"|format(face.confidence) }}% confidence)
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
-    </div>
-    
     <script>
         // Display selected filename
-        document.getElementById('file').addEventListener('change', function() {
+        document.getElementById('file').addEventListener('change', function () {
             const fileName = this.files[0].name;
             document.getElementById('file-name').textContent = fileName;
         });
+
+        // Tab functionality
+        function openTab(tabId) {
+            // Hide all tabs
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+
+            // Remove active class from buttons
+            const tabButtons = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            // Show the selected tab
+            document.getElementById(tabId).classList.add('active');
+
+            // Mark the clicked button as active
+            event.currentTarget.classList.add('active');
+        }
+
+        // Webcam streaming controls
+        document.getElementById('start-camera').addEventListener('click', function () {
+            fetch('{{ url_for("main.start_stream") }}', {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' || data.status === 'already_running') {
+                        // Show stream and controls
+                        document.getElementById('webcam-stream').src = '{{ url_for("main.video_feed") }}';
+                        document.getElementById('webcam-stream').style.display = 'block';
+                        document.getElementById('webcam-status').style.display = 'block';
+                        document.getElementById('start-camera').style.display = 'none';
+                        document.getElementById('stop-camera').style.display = 'inline-block';
+                    } else {
+                        alert('Error starting camera: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error starting camera');
+                });
+        });
+
+        document.getElementById('stop-camera').addEventListener('click', function () {
+            fetch('{{ url_for("main.stop_stream") }}', {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide stream and update controls
+                    document.getElementById('webcam-stream').style.display = 'none';
+                    document.getElementById('webcam-status').style.display = 'none';
+                    document.getElementById('start-camera').style.display = 'inline-block';
+                    document.getElementById('stop-camera').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
     </script>
 </body>
+
 </html>

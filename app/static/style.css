@@ -17,6 +17,13 @@ body {
 
 h1 {
     color: green;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #444;
+    margin-top: 30px;
 }
 
 .error-message {
@@ -26,4 +33,149 @@ h1 {
     padding: 10px 15px;
     margin-bottom: 20px;
     border-radius: 4px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+}
+
+.tab-btn.active {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    color: green;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* File Upload */
+.file-input {
+    margin-bottom: 15px;
+}
+
+.file-label {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#file {
+    display: none;
+}
+
+#file-name {
+    margin-left: 10px;
+    font-style: italic;
+    color: #666;
+}
+
+/* Buttons */
+.button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #006600;
+}
+
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Results */
+.result-container {
+    margin-top: 30px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.image-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 500px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.results-summary {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.emotions-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.emotions-list li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.emotions-list li:before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: green;
+}
+
+/* Webcam */
+.webcam-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.webcam-buttons {
+    margin-bottom: 15px;
+}
+
+.webcam-view, .detection-view {
+    width: 100%;
+    max-width: 640px;
+    margin: 10px auto;
+}
+
+#webcam, #canvas {
+    width: 100%;
+    border: 1px solid #ddd;
 }

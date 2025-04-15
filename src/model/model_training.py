@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
 from sklearn.model_selection import train_test_split
+from src.model.model_definition import create_model
 
 def train_model(images, labels, model_save_path="models/emotion_model.keras"):
     """

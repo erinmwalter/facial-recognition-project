@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 # dataset from Kaggle: https://www.kaggle.com/datasets/msambare/fer2013/data
 # it is the FER-2013 dataset
 categories = ["angry", "disgust", "fear", "happy", "neutral", "sad", "surprise"]
-file_path = "data/test"
+file_path = "src/data/test"
 
 def load_data(img_size=48):
     """
